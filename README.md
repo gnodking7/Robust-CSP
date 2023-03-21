@@ -4,7 +4,7 @@ A nonlinear eigenvector algorithm for solving data-driven robust Common Spatial 
 
 ## Common Spatial Pattern (CSP)
 
-Common Spatial Pattern (CSP) \cite{fukunaga2013introduction,blankertz2007optimizing} is a popular signal-processing technique for feature extraction of Electroencephalography (EEG) signals. It is a data-driven supervised machine learning algorithm that computes spatial filters, which extracts the distinguishing features of the EEG signals associated with a task at hand (such as a motor imagery task).
+Common Spatial Pattern (CSP) [1, 2] is a popular signal-processing technique for feature extraction of Electroencephalography (EEG) signals. It is a data-driven supervised machine learning algorithm that computes spatial filters, which extracts the distinguishing features of the EEG signals associated with a task at hand (such as a motor imagery task).
 
 ### Data acquisition and preprocessing
 
@@ -46,7 +46,7 @@ respectively.
 
 ## Robust Common Spatial Pattern
 
-The use of average covariance matrices $\overline{\Sigma}_c$ as estimates of the true covariance matrices poses a major issue due to several factors, such as non-task-related fluctuations, nonstationarity of the EEG signals, and presence of artifacts in the data. As a result, CSP is highly sensitive to noise and prone to overfitting \cite{reuderink2008robustness,yong2008robust}.
+The use of average covariance matrices $\overline{\Sigma}_c$ as estimates of the true covariance matrices poses a major issue due to several factors, such as non-task-related fluctuations, nonstationarity of the EEG signals, and presence of artifacts in the data. As a result, CSP is highly sensitive to noise and prone to overfitting [3, 4].
 
 ### Min-max CSP
 
@@ -54,7 +54,7 @@ Instead of limiting the covariance matrices to the fixed covariance, min-max CSP
 
 $$\mathcal{S}_c=\\{\Sigma_c\mid \Sigma_c\succ0,\\|\Sigma_c-\overline{\Sigma}_c\\|\leq\delta_c\\}$$
 
-where $\delta_c$ denotes the radius of $\mathcal{S}_c$. The robust spatial filters are found by considering the worst-case generalized Rayleigh quotient within the tolerance region $\mathcal{S}_c$. This leads to the min-max optimizations \cite{Kawanabe}
+where $\delta_c$ denotes the radius of $\mathcal{S}_c$. The robust spatial filters are found by considering the worst-case generalized Rayleigh quotient within the tolerance region $\mathcal{S}_c$. This leads to the min-max optimizations [5]
 
 $$\min_{x\neq0}
     \max_{\substack{\Sigma_-\in\mathcal{S}_-\\
@@ -66,7 +66,7 @@ $$\min_{x\neq0}
 
 ### Data-driven CSP
 
-A data-driven approach is used to construct the tolerance sets \cite{Kawanabe}, where the norm is defined by a PCA-based approach on the data covaraince matrices.
+A data-driven approach is used to construct the tolerance sets [5], where the norm is defined by a PCA-based approach on the data covaraince matrices.
 
 $$\mathcal{S}_{c } = \bigg\\{ 
 \Sigma_{c} = \overline\Sigma_{c} +\sum_{i=1}^m\alpha_{c}^{(i)} V_{c}^{(i)}\bigg|
@@ -148,3 +148,31 @@ $$ x_{k+1}\longleftarrow\mbox{an eigenvector of }\lambda(G_-(x_k),G_-(x_k)+G_+(x
 
 where $\lambda$ is the smallest positive eigenvalue. 
 
+## Results
+
+### Convergence Analysis
+
+A synthetic data is generated using the signals created by the following linear mixing model:
+
+$$x(t)=A\begin{bmatrix}s^d(t); s^n(t)\end{bmatrix}+\epsilon(t),$$
+
+where $A$ is a random rotation matrix, $s^d(t)$ represents the discriminative sources, $s^n(t)$ represents the nondiscriminative sources, and $\epsilon(t)$ represents the nonstationary noise.
+
+For the convergence analysis, the nondiscriminative sources $s^n(t)\in\mathbb{R}^8$ are sampled from the standard Gaussian distribution $\mathcal{N}(0,1)$ for both conditions, and the discriminative sources $s^d(t)\in\mathbb{R}^2$ are sampled from $\mathcal{N}(0,\mbox{diag}(0.2,1.4))$ for condition '-' and from $\mathcal{N}(0,\mbox{diag}(1.8,0.6))$ for condition '+'. The nonstationary noise $\epsilon(t)$ is sampled from $\mathcal{N}(0,2)$, regardless of the condition. 50 trials for each condition are created, where each trial $Y_c$ consists of 200 time samples.
+
+![CSP_convergence1](https://user-images.githubusercontent.com/91911643/226500451-340f04d1-1cb8-45d0-9bfc-5cc0f37ae86e.png)
+![CSP_convergence_err1](https://user-images.githubusercontent.com/91911643/226500453-34d03e57-2d3d-4663-82ca-d592c86cc260.png)
+
+
+
+# References
+
+[1] Zoltan Joseph Koles. The quantitative extraction and topographic mapping of the abnormal components in the clinical eeg. Electroencephalography and clinical Neurophysiology, 79(6):440–447, 1991.
+
+[2] Benjamin Blankertz, Ryota Tomioka, Steven Lemm, Motoaki Kawanabe, and Klaus-Robert Muller. Optimizing spatial filters for robust eeg single-trial analysis. IEEE Signal processing magazine, 25(1):41–56, 2007.
+
+[3] Boris Reuderink and Mannes Poel. Robustness of the common spatial patterns algorithm in the bci-pipeline. University of Twente, Tech. Rep, 2008.
+
+[4] Xinyi Yong, Rabab K. Ward, and Gary E. Birch. Robust common spatial patterns for eeg signal preprocessing. In 2008 30th Annual International Conference of the IEEE Engineering in Medicine and Biology Society, pages 2087–2090. IEEE, 2008.
+
+[5] Motoaki Kawanabe, Wojciech Samek, Klaus-Robert M ̈uller, and Carmen Vidaurre. Robust common spatial filters with a maxmin approach. Neural computation, 26(2):349–376, 2014.
