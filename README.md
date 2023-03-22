@@ -140,7 +140,7 @@ If $x$ is a local minimizer of CSP-NRQ, then it is an eigenvector of the NEPv
 
 $$G_-(x)x=\lambda(G_-(x)+G_+(x))x$$
 
-corresponding to the smallest positive eigenvalue.
+corresponding to the smallest positive eigenvalue [6].
 
 The SCF iteration for solving the correct NEPv is then
 
@@ -160,9 +160,26 @@ where $A$ is a random rotation matrix, $s^d(t)$ represents the discriminative so
 
 For the convergence analysis, the nondiscriminative sources $s^n(t)\in\mathbb{R}^8$ are sampled from the standard Gaussian distribution $\mathcal{N}(0,1)$ for both conditions, and the discriminative sources $s^d(t)\in\mathbb{R}^2$ are sampled from $\mathcal{N}(0,\mbox{diag}(0.2,1.4))$ for condition '-' and from $\mathcal{N}(0,\mbox{diag}(1.8,0.6))$ for condition '+'. The nonstationary noise $\epsilon(t)$ is sampled from $\mathcal{N}(0,2)$, regardless of the condition. 50 trials for each condition are created, where each trial $Y_c$ consists of 200 time samples.
 
-![CSP_convergence1](https://user-images.githubusercontent.com/91911643/226500451-340f04d1-1cb8-45d0-9bfc-5cc0f37ae86e.png)
-![CSP_convergence_err1](https://user-images.githubusercontent.com/91911643/226500453-34d03e57-2d3d-4663-82ca-d592c86cc260.png)
+<img src="https://user-images.githubusercontent.com/91911643/226500451-340f04d1-1cb8-45d0-9bfc-5cc0f37ae86e.png" width="500" height="350">
+<img src="https://user-images.githubusercontent.com/91911643/226500453-34d03e57-2d3d-4663-82ca-d592c86cc260.png" width="500" height="350">
 
+The convergence plots (objective values and errors) show that the Fixed-point iteration converges whereas the SCF iteration for the correct NEPv (Alg. 1) converges rapidly, displaying a local quadratic convergence. 
+
+### Classification Results
+
+The Berlin dataset (available at https://depositonce.tu-berlin.de/items/1b603748-34fe-411c-8fd2-1711925e4101) and the Gwangju dataset (available at http://gigadb.org/dataset/100295) are used to illustrate a classification rate improvement in using robust spatial filters to standard spatial filerts. 
+
+(more classification results using different datasets are avilable in this repo)
+
+Berlin
+
+![CSP_Berlin](https://user-images.githubusercontent.com/91911643/226786267-fab3cbb0-7d53-4934-aecf-c184c43d4c53.png)
+
+Gwangju
+
+![CSP_GWANGJU](https://user-images.githubusercontent.com/91911643/226786296-cdc15019-96bf-4276-b5bc-487ef47aebe0.png)
+
+In the above scatter plots, a dot represents a subject participating in the experiment. A dot above the red diagonal line implies that the corresponding subject obtained improved classification rate from using robust spatial filters. Specifically, 87.5% and 98.0% percent of Berlin and Gwangju subjects, respectively, had improved classificaiton rate.
 
 
 # References
@@ -176,3 +193,5 @@ For the convergence analysis, the nondiscriminative sources $s^n(t)\in\mathbb{R}
 [4] Xinyi Yong, Rabab K. Ward, and Gary E. Birch. Robust common spatial patterns for eeg signal preprocessing. In 2008 30th Annual International Conference of the IEEE Engineering in Medicine and Biology Society, pages 2087–2090. IEEE, 2008.
 
 [5] Motoaki Kawanabe, Wojciech Samek, Klaus-Robert M ̈uller, and Carmen Vidaurre. Robust common spatial filters with a maxmin approach. Neural computation, 26(2):349–376, 2014.
+
+[6] Zhaojun Bai, Ding Lu, and Bart Vandereycken. Robust rayleigh quotient minimization and nonlinear eigenvalue problems. SIAM Journal on Scientific Computing, 40(5):A3495–A3522, 2018.
