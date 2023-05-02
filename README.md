@@ -14,7 +14,7 @@ $$\Sigma_c^{(i)}=Y_c^{(i)}{Y_c^{(i)}}^T \in \mathbb{R}^{n\times n}.$$
 
 Each covariance matrix $\Sigma_c^{(i)}$ is positive definite since $t$ is typically much larger than $n$. Denoting $N_c$ as the number of trials for condition $c$, the average covariance matrix is
 
-$$\overline{\Sigma}_c=\frac{1}{N_c}\sum_{i=1}^{N_c}Y_c^{(i)}{Y_c^{(i)}}^T, \qquad \mbox{for }c\in\\{+,-\\}.$$
+$$\overline{\Sigma}\_c=\frac{1}{N_c}\sum\_{i=1}^{N_c}Y_c^{(i)}{Y_c^{(i)}}^T, \qquad \mbox{for }c\in\\{+,-\\}.$$
 
 ### Principles of CSP
 
@@ -36,11 +36,11 @@ CSP imposes the following couple of constraints on the spatial filters:
 
 These two constraints imply that the spatial filters correspond to the eigenvectors of the generalized eigenvalue problem
 
-$$\overline{\Sigma}_-x = \lambda (\overline{\Sigma}_-+\overline{\Sigma}_+)x.$$
+$$\overline{\Sigma}\_-x = \lambda (\overline{\Sigma}\_-+\overline{\Sigma}\_+)x.$$
 
 Typically, CSP computes only a subset of the filters that best distinguish the variances between the two classes. Such spatial filters are the extreme eigenvectors of the generalized eigenvalue problem. Let $x_-$ and $x_+$ be the extreme eigenvectors, i.e., $x_-$ is the eigenvector corresponding to the smallest eigenvector and $x_+$ is the eigenvector corresponding to the largest eigenvector. The computation of these extreme eigenvectors $x_-$ and $x_+$ is equivalent to the following generalized Rayleigh quotient
 
-$$\min_{x\neq0} \frac{x^T\overline{\Sigma}_-x}{x^T(\overline{\Sigma}_-+\overline{\Sigma}_+)x}, \qquad \min_{x\neq0} \frac{x^T\overline{\Sigma}_+x}{x^T(\overline{\Sigma}_-+\overline{\Sigma}_+)x},$$
+$$\min_{x\neq0} \frac{x^T\overline{\Sigma}\_-x}{x^T(\overline{\Sigma}\_-+\overline{\Sigma}\_+)x}, \qquad \min\_{x\neq0} \frac{x^T\overline{\Sigma}\_+x}{x^T(\overline{\Sigma}\_-+\overline{\Sigma}\_+)x},$$
 
 respectively.
 
@@ -57,24 +57,24 @@ $$\mathcal{S}_c=\\{\Sigma_c\mid \Sigma_c\succ0,\\|\Sigma_c-\overline{\Sigma}_c\\
 where $\delta_c$ denotes the radius of $\mathcal{S}_c$. The robust spatial filters are found by considering the worst-case generalized Rayleigh quotient within the tolerance region $\mathcal{S}_c$. This leads to the min-max optimizations [5]
 
 $$\min_{x\neq0}
-    \max_{\substack{\Sigma_-\in\mathcal{S}_-\\
-        \Sigma_+\in\mathcal{S}_+}}  
-    \frac{x^T\Sigma_-x}{x^T(\Sigma_-+\Sigma_+)x}, \qquad \min_{x\neq0}
-    \max_{\substack{\Sigma_-\in\mathcal{S}_-\\
-        \Sigma_+\in\mathcal{S}_+}}  
-    \frac{x^T\Sigma_+x}{x^T(\Sigma_-+\Sigma_+)x}$$
+    \max_{\substack{\Sigma\_-\in\mathcal{S}\_-\\
+        \Sigma_+\in\mathcal{S}\_+}}  
+    \frac{x^T\Sigma\_-x}{x^T(\Sigma\_-+\Sigma\_+)x}, \qquad \min\_{x\neq0}
+    \max_{\substack{\Sigma\_-\in\mathcal{S}\_-\\
+        \Sigma\_+\in\mathcal{S}\_+}}  
+    \frac{x^T\Sigma\_+x}{x^T(\Sigma\_-+\Sigma\_+)x}$$
 
 ### Data-driven CSP
 
 A data-driven approach is used to construct the tolerance sets [5], where the norm is defined by a PCA-based approach on the data covaraince matrices.
 
-$$\mathcal{S}_{c } = \bigg\\{ 
-\Sigma_{c} = \overline\Sigma_{c} +\sum_{i=1}^m\alpha_{c}^{(i)} V_{c}^{(i)}\bigg|
-\Sigma_c\succ0,\quad
-%\sqrt{\sum_{i=1}^m \frac{\big(\alpha_{c}^{(i)} \big)^2}{w_{c}^{(i)}}} = 
-\sqrt{\sum_{i=1}^m\frac{(\alpha_c^{(i)})^2}{w_c^{(i)}}}
+$$\mathcal{S}\_{c } = \bigg\\{ 
+\Sigma\_{c} = \overline\Sigma\_{c} +\sum\_{i=1}^m\alpha\_{c}^{(i)} V_{c}^{(i)}\bigg|
+\Sigma\_c\succ0,\quad
+%\sqrt{\sum\_{i=1}^m \frac{\big(\alpha\_{c}^{(i)} \big)^2}{w_{c}^{(i)}}} = 
+\sqrt{\sum\_{i=1}^m\frac{(\alpha\_c^{(i)})^2}{w_c^{(i)}}}
 \leq \delta_{c},\quad
-\alpha_{c}^{(i)}\in\mathbb{R}
+\alpha\_{c}^{(i)}\in\mathbb{R}
 \bigg\\}.$$
 
 The parameters $V_c^{(i)}$ and $w_c^{(i)}$ are computed by PCA on the data covariance matrices as follows:
@@ -120,7 +120,7 @@ where the sign of the classifier $\varphi(Y)$ determines the class label of $Y$.
 
 One natural idea for solving the CSP-NRQ is to use the fixed-point iteration scheme:
 
-$$x_{k+1}\longleftarrow\mbox{argmin}_{x\neq0}\frac{x^T\Sigma_-(x_k)x}{x^T(\Sigma_-(x_k)+\Sigma_+(x_k))x},$$
+$$x\_{k+1}\longleftarrow\mbox{argmin}\_{x\neq0}\frac{x^T\Sigma\_-(x_k)x}{x^T(\Sigma\_-(x_k)+\Sigma\_+(x_k))x},$$
 
 which is equivalent to the self-consistent field (SCF) iteration 
 
