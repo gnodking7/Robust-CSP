@@ -34,8 +34,11 @@ disp([sort(eig(SM, SM + SP)), sort(eig(SM + TSM, SM + TSM + SP + TSP))])
 %% Fixed-point iteration
 [x_f1, Q_f1, X_f1, RESD_f1, iter_f1] = rbstCSP_Fixed(SM_MAT, SP_MAT, x0, tol);
 
-%% Manopt
-[x_m1, Q_m1, iter_m1] = rbstCSP_Man(SM_MAT, SP_MAT, x0, tol);
+%% Manopt (Conjugate Gradient)
+[x_m1, Q_m1, iter_m1] = rbstCSP_Man_CG(SM_MAT, SP_MAT, x0, tol);
+
+%% Manopt (Trust Region)
+[x_mm1, Q_mm1, iter_mm1] = rbstCSP_Man_TR(SM_MAT, SP_MAT, x0, tol);
 
 %%
 % ++++++++++++++++++++++++++++++
@@ -55,8 +58,11 @@ disp([sort(eig(SP, SM + SP)), sort(eig(SP + TSP, SM + TSM + SP + TSP))])
 %% Fixed-point iteration
 [x_f2, Q_f2, X_f2, RESD_f2, iter_f2] = rbstCSP_Fixed(SP_MAT, SM_MAT, x0, tol);
 
-%% Manopt
-[x_m2, Q_m2, iter_m2] = rbstCSP_Man(SP_MAT, SM_MAT, x0, tol);
+%% Manopt (Conjugate Gradient)
+[x_m2, Q_m2, iter_m2] = rbstCSP_Man_CG(SP_MAT, SM_MAT, x0, tol);
+
+%% Manopt (Conjugate Gradient)
+[x_mm2, Q_mm2, iter_mm2] = rbstCSP_Man_TR(SP_MAT, SM_MAT, x0, tol);
 
 %%
 % ++++++++++++++++++++++++++++++
@@ -69,42 +75,46 @@ plot(Q_f1, '-+', 'LineWidth', 3, 'MarkerSize', 8);
 hold on
 plot(Q1,'-or', 'LineWidth', 3, 'MarkerSize', 8);
 plot(Q_m1,'-xk', 'LineWidth', 3, 'MarkerSize', 8);
+plot(Q_mm1,'-*g', 'LineWidth', 3, 'MarkerSize', 8);
 xlabel('Iterations', 'Fontsize', 20);
 ylabel('CSP-NRQ values q(x_k)','Fontsize',20);
-h_legend=legend('Fixed-point itr', 'Alg.1', 'Manopt', 'Location', 'southeast');
+h_legend=legend('Fixed-point itr', 'Alg.1', 'Manopt (CG)', 'Manopt (TR)', 'Location', 'southeast');
 set(h_legend, 'FontSize', 20);
-xlim([0, 50]);
+xlim([0, 30]);
 
 figure(2)
 plot(Q_f2, '-+', 'LineWidth', 3, 'MarkerSize', 8);
 hold on
 plot(Q2,'-or', 'LineWidth', 3, 'MarkerSize',8);
 plot(Q_m2,'-xk', 'LineWidth', 3, 'MarkerSize',8);
+plot(Q_mm2,'-*g', 'LineWidth', 3, 'MarkerSize',8);
 xlabel('Iterations', 'Fontsize', 20);
 ylabel('CSP-NRQ values q(x_k)','Fontsize',20);
-h_legend=legend('Fixed-point itr', 'Alg.1', 'Manopt', 'Location', 'southeast');
+h_legend=legend('Fixed-point itr', 'Alg.1', 'Manopt (CG)', 'Manopt (TR)', 'Location', 'southeast');
 set(h_legend, 'FontSize', 20);
-xlim([0, 50]);
+xlim([0, 30]);
 
 % Relative errors
 figure(3)
 semilogy(abs(Q_f1-Q1(end)), '-+', 'LineWidth', 3, 'MarkerSize', 8);
 hold on
 semilogy(abs(Q1-Q1(end)), '-or', 'LineWidth', 3, 'MarkerSize', 8);
-semilogy(abs(Q_m1-Q1(end)), '-xk', 'LineWidth', 3, 'MarkerSize', 8);
+semilogy(abs(Q_m1-Q_m1(end)), '-xk', 'LineWidth', 3, 'MarkerSize', 8);
+semilogy(abs(Q_mm1-Q_mm1(end)), '-*g', 'LineWidth', 3, 'MarkerSize', 8);
 xlabel('iterations', 'Fontsize', 20);
 ylabel('|q(x_k) -q(x_*)|', 'Fontsize', 20);
-h_legend=legend('Fixed-point itr', 'Alg.1', 'Manopt', 'Location', 'southeast');
+h_legend=legend('Fixed-point itr', 'Alg.1', 'Manopt (CG)', 'Manopt (TR)', 'Location', 'southeast');
 set(h_legend, 'FontSize', 20);
-xlim([0, 50]);
+xlim([0, 30]);
 
 figure(4)
 semilogy(abs(Q_f2-Q2(end)), '-+', 'LineWidth', 3, 'MarkerSize', 8);
 hold on
 semilogy(abs(Q2-Q2(end)), '-or', 'LineWidth', 3, 'MarkerSize', 8);
-semilogy(abs(Q_m2-Q2(end)), '-xk', 'LineWidth', 3, 'MarkerSize', 8);
+semilogy(abs(Q_m2-Q_m2(end)), '-xk', 'LineWidth', 3, 'MarkerSize', 8);
+semilogy(abs(Q_mm2-Q_mm2(end)), '-*g', 'LineWidth', 3, 'MarkerSize', 8);
 xlabel('iterations', 'Fontsize', 20);
 ylabel('|q(x_k) -q(x_*)|', 'Fontsize', 20);
-h_legend=legend('Fixed-point itr', 'Alg.1', 'Manopt', 'Location', 'southeast');
+h_legend=legend('Fixed-point itr', 'Alg.1', 'Manopt (CG)', 'Manopt (TR)', 'Location', 'southeast');
 set(h_legend, 'FontSize', 20);
-xlim([0, 50]);
+xlim([0, 30]);
