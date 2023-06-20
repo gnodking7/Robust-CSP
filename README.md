@@ -160,10 +160,10 @@ where $A$ is a random rotation matrix, $s^d(t)$ represents the discriminative so
 
 For the convergence analysis, the nondiscriminative sources $s^n(t)\in\mathbb{R}^8$ are sampled from the standard Gaussian distribution $\mathcal{N}(0,1)$ for both conditions, and the discriminative sources $s^d(t)\in\mathbb{R}^2$ are sampled from $\mathcal{N}(0,\mbox{diag}(0.2,1.4))$ for condition '-' and from $\mathcal{N}(0,\mbox{diag}(1.8,0.6))$ for condition '+'. The nonstationary noise $\epsilon(t)$ is sampled from $\mathcal{N}(0,2)$, regardless of the condition. 50 trials for each condition are created, where each trial $Y_c$ consists of 200 time samples.
 
-<img src="https://user-images.githubusercontent.com/91911643/226500451-340f04d1-1cb8-45d0-9bfc-5cc0f37ae86e.png" width="500" height="350">
-<img src="https://user-images.githubusercontent.com/91911643/226500453-34d03e57-2d3d-4663-82ca-d592c86cc260.png" width="500" height="350">
+<img src="https://github.com/gnodking7/Robust-CSP/assets/91911643/b66c087e-5a1e-42bb-a501-00ae1124490c" width="500" height="350">
+<img src="https://github.com/gnodking7/Robust-CSP/assets/91911643/f641a9a4-fc98-4341-a9ce-95562d28d862" width="500" height="350">
 
-The convergence plots (objective values and errors) show that the Fixed-point iteration converges whereas the SCF iteration for the correct NEPv (Alg. 1) converges rapidly, displaying a local quadratic convergence. 
+The convergence plots (objective values and errors) show that the Fixed-point iteration converges whereas the SCF iteration for the correct NEPv (Alg. 1) converges rapidly, displaying a local quadratic convergence. Comparison with conjugate gradient (CG) method and trust region (TR) method in Manopt (Python manifold optimization package) also shows that the SCF iteration has an advantage.
 
 ### Classification Results
 
