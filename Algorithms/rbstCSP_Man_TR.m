@@ -21,7 +21,6 @@ function [x, Q, iter] = rbstCSP_Man_TR(SM_MAT, SP_MAT, x0, tol)
     %   iter - number of iterations
 
     n = length(x0);
-%     q_fun = @(x) (x' * SM_MAT(x) * x) / (x' * (SM_MAT(x) + SP_MAT(x)) * x);
     nn = @(x) x' * (S_MAT_FIRST(SM_MAT, x) + S_MAT_FIRST(SP_MAT, x)) * x;
     nnx = @(x) (S_MAT_FIRST(SM_MAT, x) + S_MAT_FIRST(SP_MAT, x)) * x;
     q_fun = @(x) (x' * S_MAT_FIRST(SM_MAT, x) * x) / nn(x);
@@ -30,9 +29,7 @@ function [x, Q, iter] = rbstCSP_Man_TR(SM_MAT, SP_MAT, x0, tol)
     manifold = stiefelfactory(n, 1);    % sphere manifold
     problem.M = manifold;
     problem.cost = @(x) q_fun(x);
-%     problem.egrad = @(x) (2 / (x' * (SM_MAT(x) + SP_MAT(x)) * x)) * (SM_MAT(x) * x - q_fun(x) * (SM_MAT(x) + SP_MAT(x)) * x);
     problem.egrad = @(x) (2 / nn(x)) * (S_MAT_FIRST(SM_MAT, x) * x - q_fun(x) * nnx(x));
-%     problem.ehess = @(x) 2 * ( (S_MAT_FIRST(SM_MAT, x) + S_MAT_SECOND(SM_MAT, x)) - q_til_der(x) * nnx(x).T - q_til_fun(x) * (S_MAT_FIRST(SM_MAT, x) + S_MAT_SECOND(SM_MAT, x) + S_MAT_FIRST(SP_MAT, x) + S_MAT_SECOND(SP_MAT, x)) );
     options.verbosity = 0;
     options.tolgradnorm = tol;
     [x, ~, info] = trustregions(problem, x0, options);
