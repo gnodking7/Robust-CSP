@@ -12,8 +12,6 @@ DELTA = [0.5, 1, 2, 4, 6, 8]; % perturbation levels, large value may lead to non
 
 for i = 1:100
     [V1, lam1, Sbar1, V2, lam2, Sbar2, Tst1, Tst2, Train1, Train2] = synth_datagen();   % Synthetic data
-    x0 = randn(length(Sbar1), 1);   % random initial vector
-    x0 = x0 / norm(x0);
 
     % Standard CSP
     [x_L, ~] = eigs(Sbar1, Sbar1 + Sbar2, 1, 'smallestreal');
@@ -43,7 +41,7 @@ end
 %% Plot boxplots
 figure(1)
 boxplot(1 - MISSRATE_SCF')
-title('Algorithm 1', 'Fontsize', 20);
+title('CSP-nepv', 'Fontsize', 20);
 ylabel('classification rate', 'Fontsize', 20);
 xticklabels(['non-rbst', string(DELTA)]);
 ax = gca;
