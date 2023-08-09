@@ -8,58 +8,21 @@
 % Dataset: http://gigadb.org/dataset/100295
 %   52 subjects performing 2 motor imageries: left hand, right hand, 
 %
-% Utilizes BBCI Toolbox: https://github.com/bbci/bbci_public
+% Utilizes preprocessed data from 'Gwangju_Prep_Data.mat'
+%
 
-band = [8 30];
-filtOrder = 4;
-[filt_b, filt_a] = butter(filtOrder, band/512 * 2);
+load('Gwangju_Prep_Data.mat'); % Gwangju_Prep_Data
 
 DELTA = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
 MISSRATE = cell(1, 52);
 
-for i = 35:52
+for i = 1:52
     fprintf('%%%%%%%%%% STARTING Subject %d %%%%%%%%%% \n',i)
 
-    %Load file
-    if i < 10
-        name = strcat('s0',string(i),'.mat');
-    else
-        name = strcat('s',string(i),'.mat');
-    end
-    DATA = load(name); %loads eeg
-
-    %% Preprocessing Steps
-    EVENT = find(DATA.eeg.imagery_event==1);    % marking for trial onset
-
-    % Choose time segment 0.5 to 2.5 seconds after onset
-    LEFT = []; RIGHT = [];
-    for ind = EVENT
-        LEFT = [LEFT, DATA.eeg.imagery_left(1:64, ind+256:ind+1280)];
-        RIGHT = [RIGHT, DATA.eeg.imagery_right(1:64, ind+256:ind+1280)];
-    end
-    LEFT = reshape(LEFT, 64, [], length(EVENT));
-    RIGHT = reshape(RIGHT, 64, [], length(EVENT));
-    LEFT = permute(LEFT, [2 1 3]);
-    RIGHT = permute(RIGHT, [2 1 3]);
-
-    % Throw out bad trials
-    LEFT(:, :, DATA.eeg.bad_trial_indices.bad_trial_idx_voltage{1}) = [];
-    RIGHT(:, :, DATA.eeg.bad_trial_indices.bad_trial_idx_voltage{2}) = [];
-    LEFT(:, :, DATA.eeg.bad_trial_indices.bad_trial_idx_mi{1}) = [];
-    RIGHT(:, :, DATA.eeg.bad_trial_indices.bad_trial_idx_mi{2}) = [];
-
-    % Create necessary structures for BBCI
-    EEG.clab = cellstr(string(1:1:64));
-    EEG.fs = DATA.eeg.srate;
-    EEG.x = cat(3, LEFT, RIGHT);
-    EEG.x = double(EEG.x);
-    [~, ~, left_len] = size(LEFT);
-    [~, ~, right_len] = size(RIGHT);
-    EEG.y = [[ones(1, left_len); zeros(1, left_len)], [zeros(1, right_len); ones(1, right_len)]];
-    EEG.className = {'left' 'right'};
-
-    % Filter
-    EEG = proc_filtfilt(EEG, filt_b, filt_a);
+    % Load preprocessed data
+    EEG = Gwangju_Prep_Data{i}.EEG;
+    left_len = nnz(EEG.y(1, :));
+    right_len = nnz(EEG.y(2, :));
 
     % Randomly split number of trials into 10 subsets
     L_rnd_idx = randperm(left_len);
@@ -79,7 +42,7 @@ for i = 35:52
 
     MissRate = [];
 
-    for k = 1:10
+    for k = 1:120
         fprintf('********** CV number %d ********** \n', k)
 
         IDX = test_idx(k, :);
@@ -140,13 +103,18 @@ end
 
 figure(1)
 hold on
-for i = 1:28
-scatter(1 - mean(GWANGJU_MISSRATE{i}(1, :)), 1 - mean(GWANGJU_MISSRATE{i}(2, :)), 50, 'b', 'filled')
+for i = 1:52
+    scatter(1 - mean(MISSRATE{i}(1, :)), 1 - mean(MISSRATE{i}(2, :)), 50, 'b', 'filled')
 end
 xlim([0.4, 1.0])
 ylim([0.4, 1.0])
 t = linspace(0.4, 1.0, 500);
 plot(t, t, 'r', 'LineWidth', 1.5)
+text(0.3, 0.9, '98.0%', 'Color', 'r', 'FontSize', 20)
+text(0.9, 0.3, '2.0%', 'Color', 'r', 'FontSize', 20)
+xlabel('CSP', 'Fontsize', 20);
+ylabel('CSP-nepv','Fontsize', 20);
+title('Classification rate', 'Fontsize', 20);
 
 
 %%
