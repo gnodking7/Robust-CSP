@@ -12,7 +12,6 @@
 
 BAND = load('bands.mat');   % bandpass filter values for each subject
 IVAL = load('ivals.mat');   % time interval for each subject
-filtOrder = 3;  % for butter bandpass filter
 
 DELTA = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0];
 
