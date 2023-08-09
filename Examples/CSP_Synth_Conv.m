@@ -12,9 +12,9 @@ rng(3);
 [V1, lam1, Sbar1, V2, lam2, Sbar2, Tst1, Tst2, Train1, Train2] = synth_datagen();
 delta = 6; % perturbation level, large value may lead to nonsmooth case 
 
-x0 = randn(length(Sbar1), 1);   % random initial vector
-x0 = x0 / norm(x0);
-tol = 1e-8;
+% Standard CSP
+[x_L, ~] = eigs(Sbar1, Sbar1 + Sbar2, 1, 'smallestreal');
+[x_R, ~] = eigs(Sbar2, Sbar1 + Sbar2, 1, 'smallestreal');
 
 %%
 % ++++++++++++++++++++++++++++++
@@ -24,7 +24,7 @@ SM_MAT = @(x) S_MAT(x, lam1, V1, delta, Sbar1, 0);
 SP_MAT = @(x) S_MAT(x, lam2, V2, delta, Sbar2, 1);
 
 %% SCF for NEPv
-[x1, Q1, X1, RESD1, iter1, Nls1] = rbstCSP_SCF(SM_MAT, SP_MAT, x0, tol);
+[x1, Q1, X1, RESD1, iter1, Nls1] = rbstCSP_SCF(SM_MAT, SP_MAT, x_L, tol);
 % Display eig order
 [SM, TSM] = SM_MAT(x1);
 [SP, TSP] = SP_MAT(x1);
@@ -32,13 +32,13 @@ disp(['Eigenvalue associated with solution is: ', num2str(Q1(end))]);
 disp([sort(eig(SM, SM + SP)), sort(eig(SM + TSM, SM + TSM + SP + TSP))])
 
 %% Fixed-point iteration
-[x_f1, Q_f1, X_f1, RESD_f1, iter_f1] = rbstCSP_Fixed(SM_MAT, SP_MAT, x0, tol);
+[x_f1, Q_f1, X_f1, RESD_f1, iter_f1] = rbstCSP_Fixed(SM_MAT, SP_MAT, x_L, tol);
 
 %% Manopt (Conjugate Gradient)
-[x_m1, Q_m1, iter_m1] = rbstCSP_Man_CG(SM_MAT, SP_MAT, x0, tol);
+[x_m1, Q_m1, iter_m1] = rbstCSP_Man_CG(SM_MAT, SP_MAT, x_L, tol);
 
 %% Manopt (Trust Region)
-[x_mm1, Q_mm1, iter_mm1] = rbstCSP_Man_TR(SM_MAT, SP_MAT, x0, tol);
+[x_mm1, Q_mm1, iter_mm1] = rbstCSP_Man_TR(SM_MAT, SP_MAT, x_L, tol);
 
 %%
 % ++++++++++++++++++++++++++++++
@@ -48,7 +48,7 @@ SP_MAT = @(x) S_MAT(x, lam2, V2, delta, Sbar2, 0);
 SM_MAT = @(x) S_MAT(x, lam1, V1, delta, Sbar1, 1);
 
 %% SCF for NEPv
-[x2, Q2, X2, RESD2, iter2, Nls2] = rbstCSP_SCF(SP_MAT, SM_MAT, x0, tol);
+[x2, Q2, X2, RESD2, iter2, Nls2] = rbstCSP_SCF(SP_MAT, SM_MAT, x_R, tol);
 % Display eig order
 [SP, TSP] = SP_MAT(x2);
 [SM, TSM] = SM_MAT(x2);
@@ -56,13 +56,13 @@ disp(['Eigenvalue associated with solution is: ', num2str(Q2(end))]);
 disp([sort(eig(SP, SM + SP)), sort(eig(SP + TSP, SM + TSM + SP + TSP))])
 
 %% Fixed-point iteration
-[x_f2, Q_f2, X_f2, RESD_f2, iter_f2] = rbstCSP_Fixed(SP_MAT, SM_MAT, x0, tol);
+[x_f2, Q_f2, X_f2, RESD_f2, iter_f2] = rbstCSP_Fixed(SP_MAT, SM_MAT, x_R, tol);
 
 %% Manopt (Conjugate Gradient)
-[x_m2, Q_m2, iter_m2] = rbstCSP_Man_CG(SP_MAT, SM_MAT, x0, tol);
+[x_m2, Q_m2, iter_m2] = rbstCSP_Man_CG(SP_MAT, SM_MAT, x_R, tol);
 
 %% Manopt (Conjugate Gradient)
-[x_mm2, Q_mm2, iter_mm2] = rbstCSP_Man_TR(SP_MAT, SM_MAT, x0, tol);
+[x_mm2, Q_mm2, iter_mm2] = rbstCSP_Man_TR(SP_MAT, SM_MAT, x_R, tol);
 
 %%
 % ++++++++++++++++++++++++++++++
