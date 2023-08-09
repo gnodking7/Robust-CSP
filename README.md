@@ -148,6 +148,8 @@ $$ x_{k+1}\longleftarrow\mbox{an eigenvector of }\lambda(G_-(x_k),G_-(x_k)+G_+(x
 
 where $\lambda$ is the smallest positive eigenvalue. 
 
+This SCF iteration is named as **CSP-nepv**.
+
 ## Results
 
 ### Convergence Analysis
