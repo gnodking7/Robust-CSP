@@ -184,6 +184,12 @@ Gwangju
 In the above scatter plots, a dot represents a subject participating in the experiment. A dot above the red diagonal line implies that the corresponding subject obtained improved classification rate from using robust spatial filters. Specifically, 87.5% and 98.0% percent of Berlin and Gwangju subjects, respectively, had improved classificaiton rate.
 
 
+# Datasets Availability
+
+In the 'Datasets' folder, we provide a text file with a Google Drive link to preprocessed datasets that are used in the examples.
+For those interested, the codes for the preprocessing steps are also provided in the 'Preprocessing Data' folder.
+(somehow along the way, the preprocessing codes for the Distraction dataset are lost and only the preprocessed datasets remain, which we include in the 'Datasets' folder)
+
 # References
 
 [1] Zoltan Joseph Koles. The quantitative extraction and topographic mapping of the abnormal components in the clinical eeg. Electroencephalography and clinical Neurophysiology, 79(6):440–447, 1991.
