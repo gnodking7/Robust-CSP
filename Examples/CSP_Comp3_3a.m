@@ -1,5 +1,5 @@
 %%% Data set IIIa—BCI competition III %%%
-% Computes robust Common Spatial Filters (solves CSP-NRQ) and 
+% Computes robust Common Spatial Filters and 
 % performs classification of motor imageries on BCI competition III - IIIa
 % dataset
 %
@@ -7,13 +7,10 @@
 %   three subjects performing 4 motor imageries: left hand, right hand,
 %   foot, tongue
 %
-% Utilizes BBCI Toolbox: https://github.com/bbci/bbci_public
+% Utilizes preprocessed data from 'Comp3_3a_Prep_Data.mat'
+%
 
-subjects = {'l1', 'k3', 'k6'};
-
-x0 = randn(length(Sbar1), 1);   % random initial vector
-x0 = x0 / norm(x0);
-tol = 1e-8;
+load('Comp3_3a_Prep_Data.mat'); % Comp3_3a_Prep_Data
 
 DELTA = [0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5];
 
@@ -21,19 +18,14 @@ MISSRATE = [];
 for i = 1:3
     fprintf('%%%%%%%%%% STARTING Subject %d %%%%%%%%%% \n', i)
 
-    % Load file -> gives s and HDR
-    % Load true label
-    name = strcat(subjects{i}, 'b.mat');
-    load(name) %s and HDR
-    label_name = strcat('true_label_', subjects{i}, '.txt');
-    true_label = importdata(label_name);
-
-    % Get prprocessed data structures
-    [train_CNT, test_CNT] = preprocesser(s, HDR, true_label);
-
-    % Extract datasets and covariance matrices
-    [train_L, train_R, CovL, CovR] = Cov_Mats(train_CNT);
-    [test_L, test_R, ~, ~] = Cov_Mats(test_CNT);
+    % Load preprocessed data
+    Cur_Data = Comp3_3a_Prep_Data{i};
+    train_L = Comp3_3a_Prep_Data{i}.train_L;
+    train_R = Comp3_3a_Prep_Data{i}.train_R;
+    CovL = Comp3_3a_Prep_Data{i}.CovL;
+    CovR = Comp3_3a_Prep_Data{i}.CovR;
+    test_L = Comp3_3a_Prep_Data{i}.test_L;
+    test_R = Comp3_3a_Prep_Data{i}.test_R;
 
     % Compute interpolation matrices, average covariance matrices, robust
     % CSP weights (eigs)
@@ -68,38 +60,41 @@ end
 %% Plots of classification rate
 
 figure(1)
-plot(1 - MISSRATE(2:end, 1), '-+', 'LineWidth', 3, 'MarkerSize', 8);
-yline(1 - MISSRATE(1, 1), '--', 'LineWidth', 2)
-xticklabels(string(DELTA));
+plot(DELTA, 1 - MISSRATE(2:end, 1), '-+', 'LineWidth', 3, 'MarkerSize', 8);
+yline(1 - MISSRATE(1, 1), '--', 'LineWidth', 2);
+xlim([0.1 1.5]);
+xticks([0.2 0.4 0.6 0.8 1 1.2 1.4]);
 ax = gca;
 ax.XAxis.FontSize = 13;
 xlabel('\delta_c', 'Fontsize', 20);
-ylabel('classification rate', 'Fontsize', 20);
-h_legend=legend('Alg.1', 'non-rbst', 'Location', 'northwest');
+ylabel('Classification rate', 'Fontsize', 20);
+h_legend=legend('CSP-nepv', 'non-rbst', 'Location', 'southwest');
 set(h_legend, 'FontSize', 20);
 title('Subject l1', 'FontSize', 20);
 
 figure(2)
-plot(1 - MISSRATE(2:end, 2), '-+', 'LineWidth', 3, 'MarkerSize', 8);
-yline(1 - MISSRATE(1, 2), '--', 'LineWidth', 2)
-xticklabels(string(DELTA));
+plot(DELTA, 1 - MISSRATE(2:end, 2), '-+', 'LineWidth', 3, 'MarkerSize', 8);
+yline(1 - MISSRATE(1, 2), '--', 'LineWidth', 2);
+xlim([0.1 1.5]);
+xticks([0.2 0.4 0.6 0.8 1 1.2 1.4]);
 ax = gca;
 ax.XAxis.FontSize = 13;
 xlabel('\delta_c', 'Fontsize', 20);
-ylabel('classification rate', 'Fontsize', 20);
-h_legend=legend('Alg.1', 'non-rbst', 'Location', 'northwest');
+ylabel('Classification rate', 'Fontsize', 20);
+h_legend=legend('CSP-nepv', 'non-rbst', 'Location', 'southwest');
 set(h_legend, 'FontSize', 20);
 title('Subject k3', 'FontSize', 20);
 
 figure(3)
-plot(1 - MISSRATE(2:end, 3), '-+', 'LineWidth', 3, 'MarkerSize', 8);
-yline(1 - MISSRATE(1, 3), '--', 'LineWidth', 2)
-xticklabels(string(DELTA));
+plot(DELTA, 1 - MISSRATE(2:end, 3), '-+', 'LineWidth', 3, 'MarkerSize', 8);
+yline(1 - MISSRATE(1, 3), '--', 'LineWidth', 2);
+xlim([0.1 1.5]);
+xticks([0.2 0.4 0.6 0.8 1 1.2 1.4]);
 ax = gca;
 ax.XAxis.FontSize = 13;
 xlabel('\delta_c', 'Fontsize', 20);
-ylabel('classification rate', 'Fontsize', 20);
-h_legend=legend('Alg.1', 'non-rbst', 'Location', 'northwest');
+ylabel('Classification rate', 'Fontsize', 20);
+h_legend=legend('CSP-nepv', 'non-rbst', 'Location', 'southwest');
 set(h_legend, 'FontSize', 20);
 title('Subject k6', 'FontSize', 20);
 
@@ -108,83 +103,6 @@ title('Subject k6', 'FontSize', 20);
 %%
 
 %%%%%%%%%% FUNCTIONS %%%%%%%%%%
-
-% ---------------------------------------------------- %
-%   preprocesser: preprocess EEG signals
-% ---------------------------------------------------- %
-function [train_CNT, test_CNT] = preprocesser(s, h, label)
-    % Event types are:
-    %   768 - beginning of trial
-    % 	785 - beep, fixation cross
-    % 	786 - same as 785
-    % 	771, 772, 770, 769 - trigger (four classes: 3, 4, 2, 1)
-    % 		1 - left, 2 - right
-    % 	783 - unknown class (for testing)
-    % 	1023 - artifact indication
-    %
-    % Input:
-    %   s - raw data
-    %   h - markers data
-    %   label - true labels
-    % Output:
-    %   train_CNT, test_CNT - segmented and filtered BBCI data structure
-    
-    % Add/create necessary structures (for BBCI Toolbox)
-    aa = cellstr(string(1:1:60));
-    new_cnt.clab = aa;
-    new_cnt.fs = 250;
-    new_cnt.T = length(s);
-    new_cnt.x = s;
-    
-    mrk.time = h.EVENT.POS'; % Time when event occurs
-    type = h.EVENT.TYP; % Numbered types of event
-    tmp_type = type;
-    % Discard non-motory imagery events
-    tmp_type(tmp_type==768) = [];
-    tmp_type(tmp_type==785) = [];
-    tmp_type(tmp_type==786) = [];
-    tmp_type(tmp_type==1023) = [];
-    ind = find(tmp_type==783); %index of unknown trials (used for testing)
-    counter = 1;
-    for i = 1:length(type)
-        if type(i) == 783
-            type(i) = label(ind(counter)) + 668; %replace 783 (testing) with new type values
-            counter = counter + 1;
-        end
-    end
-    mrk.event.desc = type;
-    train_mrk = mrk_defineClasses(mrk, {769 770; 'left' 'right'});  % BBCI Toolbox function
-    test_mrk = mrk_defineClasses(mrk, {669 670; 'left' 'right'});
-    
-    %Segment and filter
-    train_epo = proc_segmentation(new_cnt, train_mrk, [0 4000]); % BBCI Toolbox function; this chooses epoch length incorrectly; but still same size structure
-    test_epo = proc_segmentation(new_cnt, test_mrk, [0 4000]);
-    ival = [0 750]; % Use EEG signals up to 3 seconds after trigger
-
-    train_nMarkers = length(train_mrk.time);
-    train_len_sa = diff(ival);
-    train_pos_zero = train_mrk.time;
-    train_pos_end = train_pos_zero + ival(2);
-    train_IV = [-train_len_sa + 1:0]' * ones(1, train_nMarkers) + ones(train_len_sa, 1) * train_pos_end;
-    train_epo.x = reshape(new_cnt.x(train_IV, :), [train_len_sa train_nMarkers 60]);
-    train_epo.x = permute(train_epo.x, [1 3 2]);
-    
-    test_nMarkers = length(test_mrk.time);
-    test_len_sa = diff(ival);
-    test_pos_zero = test_mrk.time;
-    test_pos_end = test_pos_zero + ival(2);
-    test_IV = [-test_len_sa+1:0]' * ones(1, test_nMarkers) + ones(test_len_sa, 1) * test_pos_end;
-    test_epo.x = reshape(new_cnt.x(test_IV, :), [test_len_sa test_nMarkers 60]);
-    test_epo.x = permute(test_epo.x, [1 3 2]);
-    
-    % Bandpass filter
-    band = [8 30];
-    filtOrder = 5;
-    [filt_b, filt_a] = butter(filtOrder, band/new_cnt.fs * 2);
-    
-    train_CNT = proc_filtfilt(train_epo, filt_b, filt_a); % BBCI Toolbox function
-    test_CNT = proc_filtfilt(train_epo, filt_b, filt_a);
-end
 
 % ---------------------------------------------------- %
 %   SCF: robust csp by scf
